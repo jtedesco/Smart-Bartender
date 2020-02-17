@@ -25,7 +25,6 @@ if __name__ == "__main__":
             drink['ingredients'] = (
                     'Contains ' + ', '.join(drink['ingredients'].keys()))
             drink['id'] = drink['name'].lower().replace(' ', '_')
-            print(drink)
 
     # register drink making interrupts
     # register gpio to press right/enter
