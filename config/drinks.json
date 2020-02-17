@@ -1,0 +1,22 @@
+[{
+  "name": "Old Fashioned",
+  "description": "Just some whisky!",
+  "ingredients": {
+    "whisky": 10
+  }
+},
+{
+  "name": "Martini",
+  "description": "Just some vodka!",
+  "ingredients": {
+    "vodka": 10
+  }
+},
+{
+  "name": "Manhattan",
+  "description": "This is a manhattan!!",
+  "ingredients": {
+    "whisky": 10,
+    "vermouth": 5
+  }
+}]
