@@ -13,3 +13,7 @@
 .carousel-indicators li {
   height: 10px;
 }
+
+.progress-popup {
+  height:30px;
+}
