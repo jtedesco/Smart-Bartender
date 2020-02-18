@@ -1,16 +1,41 @@
 import json
 import os
+import threading
+import time
 
 from flask import Flask
 from flask import render_template
 
+# TODO Add a global lock for making drinks
+
 def create_server(drinks_config):
 
     server = Flask(__name__)
+    drink_lock = threading.Lock()
 
     @server.route("/")
     def index():
         return render_template('index.html', drinks_config=drinks_config)
+
+    @server.route("/make_drink/<drink_id>", methods=['POST'])
+    def make_drink(drink_id=None):
+
+        if drink_lock.locked():
+            message = "We're already making a drink, this should never happen!"
+            print(message)
+            return (message, 400)
+
+        if not drink_id:
+            message = "Asked to make a drink, but no drink id was provided!"
+            print(message)
+            return (message, 400)
+
+        with drink_lock:
+            drink = next(d for d in drinks_config if d['id'] == drink_id)
+            print('Making %s for %d seconds...' %
+                    (drink['name'], drink['duration']))
+            time.sleep(drink['duration'])
+            return ('', 200)
 
     return server
 

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="/static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style/style.css">
   </head>
   <body>
 
@@ -15,7 +16,7 @@
 
         <!-- generate the carousel indicators -->
         {% for drink in drinks_config %}
-        <li data-target="#drinkCarousel"
+        <li data-target="#drinkCarousel" height=50
             data-slide-to="{{ loop.index - 1}}"
             {% if loop.index == 1 %}
               class="active"
@@ -27,15 +28,15 @@
         <!-- create the actual carousels -->
         {% for drink in drinks_config %}
         <div class="carousel-item
-            {% if loop.index == 1 %} active {% endif %}" ></li>
+            {% if loop.index == 1 %} active {% endif %}"
             data-drink-id="{{ drink.id }}"
-            data-drink-delay={{ drink.duration }}>
+            data-drink-delay={{ drink.duration }}></li>
           <img class="d-block w-100"
                 data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text={{ drink.name }}"
                 src="/static/images/{{ drink.id }}.jpg"
                 data-holder-rendered="true">
           <div class="carousel-caption">
-            <h2>{{ drink.name }}</h2>
+            <h1>{{ drink.name }}</h1>
             <p>{{ drink.ingredients }}</p>
           </div>
         </div>
@@ -44,16 +45,16 @@
       </div>
 
       <!-- create hidden previous/next buttons -->
-      <a class="carousel-control-prev " href="#drinkCarousel" role="button" data-slide="prev">
+      <a class="carousel-control-prev d-none" href="#drinkCarousel" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       </a>
-      <a class="carousel-control-next " href="#drinkCarousel" role="button" data-slide="next">
+      <a class="carousel-control-next d-none" href="#drinkCarousel" role="button" data-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
       </a>
     </div>
       
     <!-- bootstrap boilerplate -->
-    <script src="/static/scripts/jquery-3.3.1.slim.min.js"></script>
+    <script src="/static/scripts/jquery-3.4.1.min.js"></script>
     <script src="/static/scripts/bootstrap.min.js"></script>
     <script src="/static/scripts/popper.min.js"></script>
 
