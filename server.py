@@ -6,6 +6,9 @@ import time
 from flask import Flask
 from flask import render_template
 
+import gpio_buttons
+
+
 def create_server(drinks_config):
 
     server = Flask(__name__)
@@ -51,4 +54,8 @@ if __name__ == "__main__":
 
     # register drink making interrupts
     # register gpio to press right/enter
-    create_server(drinks_config).run(debug=True)
+    try:
+        gpio_buttons.register_handlers()
+        create_server(drinks_config).run(debug=True)
+    finally:
+        gpio_buttons.cleanup_handlers()
