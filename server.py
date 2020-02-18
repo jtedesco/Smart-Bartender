@@ -6,8 +6,6 @@ import time
 from flask import Flask
 from flask import render_template
 
-# TODO Add a global lock for making drinks
-
 def create_server(drinks_config):
 
     server = Flask(__name__)
