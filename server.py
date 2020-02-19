@@ -2,6 +2,7 @@ import json
 import os
 import threading
 import time
+import uinput
 
 from flask import Flask
 from flask import render_template
@@ -53,9 +54,10 @@ if __name__ == "__main__":
             drink['id'] = drink['name'].lower().replace(' ', '_')
 
     # register drink making interrupts
-    # register gpio to press right/enter
     try:
-        gpio_buttons.register_handlers()
-        create_server(drinks_config).run(debug=True)
+        time.sleep(1)
+        with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:
+            gpio_buttons.register_handlers(device)
+            create_server(drinks_config).run(debug=True)
     finally:
         gpio_buttons.cleanup_handlers()

@@ -1,4 +1,7 @@
 import os
+import time
+import uinput
+
 
 # Fake out GPIO if not on a raspberry pi
 if 'raspberrypi' in os.uname():
@@ -8,16 +11,7 @@ else:
     import fake_gpio as GPIO
 
 
-def left_button(ctx):
-    # TODO register to next and enter as keyboard presses
-    print('Pushed left button')
-
-
-def right_button(ctx):
-    print('Pushed right button')
-
-
-def register_handlers():
+def register_handlers(device):
     print('Registering GPIO handlers')
 
     GPIO.setmode(GPIO.BCM)
@@ -29,6 +23,12 @@ def register_handlers():
 
     GPIO.setup(LEFT_BTN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(RIGHT_BTN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    def left_button(ctx):
+        device.emit_click(uinput.KEY_ENTER)
+
+    def right_button(ctx):
+        device.emit_click(uinput.KEY_RIGHT)
 
     GPIO.add_event_detect(
             LEFT_BTN,
@@ -45,3 +45,14 @@ def register_handlers():
 def cleanup_handlers():
     print('Cleaning up GPIO registration')
     GPIO.cleanup()
+
+
+if __name__ == "__main__":
+    try:
+        time.sleep(1)
+        with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:
+            register_handlers(device)
+            while True:
+                pass
+    finally:
+        cleanup_handlers()
