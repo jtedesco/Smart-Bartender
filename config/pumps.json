@@ -33,4 +33,16 @@
 	"name": "Pump 6",
 	"pin": 25, 
 	"value": "cj"
+},
+{
+	"flowrate": 1,
+	"name": "Pump 7",
+	"pin": 12, 
+	"value": "cj"
+},
+{
+	"flowrate": 1,
+	"name": "Pump 8",
+	"pin": 16, 
+	"value": "cj"
 }]
