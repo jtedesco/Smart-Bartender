@@ -17,3 +17,6 @@
 .progress-popup {
   height:30px;
 }
+
+/* Prevent body overflow (e.g. in kiosk mode) */
+html { overflow:hidden; }
