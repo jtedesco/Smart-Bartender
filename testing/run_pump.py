@@ -1,8 +1,8 @@
 import json
 import os
 import sys
-
 import RPi.GPIO as GPIO
+
 GPIO.setwarnings(False)
 
 with open(os.path.abspath('../config/pumps.json')) as f:
@@ -19,11 +19,11 @@ print('Running %s, flowrate %.2f, pin %d, with %s' % (
     config['name'], config['flowrate'], config['pin'], config['value']))
 
 pin = config['pin'] 
-ounce_time = 1 * config['flowrate']
-
 try:
     GPIO.output(pin, GPIO.LOW)
     while True:
         pass
 except:
+    pass
+finally:
     GPIO.output(pin, GPIO.HIGH)
