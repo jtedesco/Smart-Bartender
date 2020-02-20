@@ -1,7 +1,12 @@
 import os
 import time
-import uinput
 
+# Fake out uinput if not on a raspberry pi
+if 'raspberrypi' in os.uname():
+    import uinput
+else:
+    print('Raspberry pi not detected, faking out uinput')
+    import fake_uinput as uinput
 
 # Fake out GPIO if not on a raspberry pi
 if 'raspberrypi' in os.uname():

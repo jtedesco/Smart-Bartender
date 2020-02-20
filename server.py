@@ -2,7 +2,13 @@ import json
 import os
 import threading
 import time
-import uinput
+
+# Fake out uinput if not on a raspberry pi
+if 'raspberrypi' in os.uname():
+    import uinput
+else:
+    print('Raspberry pi not detected, faking out uinput')
+    import fake_uinput as uinput
 
 from flask import Flask
 from flask import render_template
