@@ -26,7 +26,7 @@ let keyHandlerFunction = function(e) {
     bar = modal.find('.progress-bar');
     $('.progress-bar').width('0%');
     let drinkName = $('.carousel-item.active').find('.carousel-caption h1').text();
-    $('.modal-title').text('One ' + drinkName + ' coming up!');
+    $('.modal-title').text('Making ' + drinkName + '...');
     modal.modal('show');
 
     // Animate the modal

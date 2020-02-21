@@ -3,20 +3,42 @@
   top: 50%;
   transform: translateY(-50%);
   bottom: initial;
+  border-radius: 1rem!important;
+  background-color: #666666;
+  border: 2px solid white;
+  box-shadow: 3px #000000;
+  opacity: 0.9;
 }
 .carousel-item {
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
 }
 
 .carousel-indicators li {
-  height: 10px;
+  height: 20px;
+  border: 2px;
+  border-radius: 5px;
 }
 
 .progress-popup {
-  height:30px;
+  height: 30px;
 }
 
 /* Prevent body overflow (e.g. in kiosk mode) */
 html { overflow:hidden; }
+
+/* Make fonts bigger for tiny bartender screen */
+h1 {
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 3rem;
+}
+
+h3 {
+  font-size: 2.5rem;
+}
+
+p {
+  font-size: 2rem;
+}
