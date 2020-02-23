@@ -1,8 +1,13 @@
+import gpio_wrapper
 import json
 import os
 import sys
 import threading
 import time
+
+from flask import Flask
+from flask import render_template
+from gpio_wrapper import GPIO
 
 # Fake out uinput if not on a raspberry pi
 if 'raspberrypi' in os.uname():
@@ -11,17 +16,19 @@ else:
     print('Raspberry pi not detected, faking out uinput')
     import fake_uinput as uinput
 
-from flask import Flask
-from flask import render_template
 
-import gpio_wrapper
+def timed_pour(pin, seconds):
+    GPIO.output(pin, GPIO.LOW)
+    time.sleep(seconds)
+    GPIO.output(pin, GPIO.HIGH)
 
 
-def create_server(drinks_config, sampling_mode=False):
+def create_server(drinks_config, pumps_config, sampling_mode=False):
 
     server = Flask(__name__)
     drink_lock = threading.Lock()
     sampling_mode = sampling_mode
+    pumps_by_ingredient = {p['value']: (p['pin'], p['flowrate']) for p in pumps_config}
 
     @server.route("/")
     def index():
@@ -43,14 +50,18 @@ def create_server(drinks_config, sampling_mode=False):
         with drink_lock:
             drink = next(d for d in drinks_config if d['id'] == drink_id)
 
-            # TODO: pour in parallel
-            # TODO respect sampling mode
-            timed_pour(pin, time)
-
             print('Making %s for %d seconds...' %
                     (drink['name'], drink['duration']))
 
-            time.sleep(drink['duration'])
+            threads = []
+            for ingredient, duration in drink['ingredients'].items():
+                pin, flowrate = pumps_by_ingredient[ingredient]
+                duration = duration * flowrate * (0.25 if sampling_mode else 1)
+                thread = threading.Thread(target=timed_pour, args=(pin, duration))
+                thread.start()
+                threads.append(thread)
+            for thread in threads:
+                thread.join()
 
             return ('', 200)
 
@@ -70,6 +81,7 @@ if __name__ == "__main__":
     ingredients_available = set(p['value'] for p in pumps_config)
     with open(os.path.abspath('config/drinks.json')) as f:
         drinks_config = json.load(f)
+        updated_drinks = []
         for drink in drinks_config:
             ingredients_needed = set(drink['ingredients'].keys())
             missing_ingredients = ingredients_needed - set(ingredients_available)
@@ -81,15 +93,16 @@ if __name__ == "__main__":
                 drink['duration'] = (
                         max(drink['ingredients'].values())
                         * (0.25 if sampling_mode else 1))
-                drink['ingredients'] = (
+                drink['ingredients_list'] = (
                         'Contains ' + ', '.join(drink['ingredients'].keys()))
                 drink['id'] = drink['name'].lower().replace(' ', '_')
+                updated_drinks.append(drink)
 
     # register drink making interrupts
     try:
         time.sleep(1)
         with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:
             gpio_wrapper.register_handlers(device)
-            create_server(drinks_config, sampling_mode).run(debug=True)
+            create_server(updated_drinks, pumps_config, sampling_mode).run(debug=True)
     finally:
         gpio_wrapper.cleanup_handlers()
