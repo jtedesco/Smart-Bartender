@@ -19,7 +19,7 @@ config = pump_config[pump_i]
 print('Running %s, flowrate %.2f, pin %d, with %s' % (
     config['name'], config['flowrate'], config['pin'], config['value']))
 
-pin = config['pin'] 
+pin = config['pin']
 ounce_time = 1 * config['flowrate']
 
 GPIO.output(pin, GPIO.LOW)
