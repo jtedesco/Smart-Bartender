@@ -1,22 +1,70 @@
 [{
-  "name": "Old Fashioned",
-  "description": "Just some whisky!",
+  "name": "French 75",
+  "description": "",
   "ingredients": {
-    "whisky": 10
+    "champagne": 3,
+    "gin": 1,
+    "simple syrup": 0.5,
+    "lemon juice": 0.5
   }
 },
 {
-  "name": "Martini",
-  "description": "Just some vodka!",
+  "name": "Sazerac",
+  "description": "",
   "ingredients": {
-    "vodka": 10
+    "absinthe": 0.25,
+    "simple syrup": 0.5,
+    "rye whisky": 1.5
   }
 },
 {
-  "name": "Manhattan",
-  "description": "This is a manhattan!!",
+  "name": "Mardi Gras Cocktail",
+  "description": "",
   "ingredients": {
-    "whisky": 10,
-    "vermouth": 5
+    "rum": 2,
+    "tropical juice": 12
   }
-}]
+},
+{
+  "name": "Champagne Cocktail",
+  "description": "",
+  "ingredients": {
+    "champagne": 3,
+    "rye whisky": 1,
+    "simple syrup": 0.5,
+    "lemon juice": 0.5
+  }
+},
+{
+  "name": "Whisky Sour",
+  "description": "",
+  "ingredients": {
+    "rye whisky": 2,
+    "lemon juice": 0.75,
+    "simple syrup": 0.75
+  }
+},
+{
+  "name": "Rye Old Fashioned",
+  "description": "",
+  "ingredients": {
+    "rye whisky": 2,
+    "simple syrup": 0.5
+  }
+},
+{
+  "name": "Rum Old Fashioned",
+  "description": "",
+  "ingredients": {
+    "rum": 2,
+    "simple syrup": 0.5
+  }
+},
+{
+  "name": "Tropical Mimosa",
+  "description": "",
+  "ingredients": {
+    "champagne": 4,
+    "tropical juice": 4
+  }
+} ]
