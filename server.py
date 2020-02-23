@@ -76,8 +76,12 @@ if __name__ == "__main__":
         sampling_mode = True
         print('Running server in sampling mode, all drinks will be made at 1/4 size.')
 
+    # Load pump config
     with open(os.path.abspath('config/pumps.json')) as f:
         pumps_config = json.load(f)
+        gpio_wrapper.init_outputs(pumps_config)
+
+    # Load available drinks
     ingredients_available = set(p['value'] for p in pumps_config)
     with open(os.path.abspath('config/drinks.json')) as f:
         drinks_config = json.load(f)
@@ -98,7 +102,7 @@ if __name__ == "__main__":
                 drink['id'] = drink['name'].lower().replace(' ', '_')
                 updated_drinks.append(drink)
 
-    # register drink making interrupts
+    # Register gpio / keyboard mapping
     try:
         time.sleep(1)
         with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:

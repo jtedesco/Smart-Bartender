@@ -11,6 +11,7 @@ else:
 # Fake out GPIO if not on a raspberry pi
 if 'raspberrypi' in os.uname():
     import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
 else:
     print('Raspberry pi not detected, faking out GPIO')
     import fake_gpio as GPIO
@@ -18,8 +19,6 @@ else:
 
 def register_handlers(device):
     print('Registering GPIO handlers')
-
-    GPIO.setmode(GPIO.BCM)
 
     LEFT_BTN = 13
     RIGHT_BTN = 26
@@ -50,6 +49,11 @@ def register_handlers(device):
 def cleanup_handlers():
     print('Cleaning up GPIO registration')
     GPIO.cleanup()
+
+
+def init_outputs(pumps_config):
+    for config in pumps_config:
+        GPIO.setup(config['pin'], GPIO.OUT, initial=GPIO.HIGH)
 
 
 if __name__ == "__main__":
