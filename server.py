@@ -13,7 +13,7 @@ else:
 from flask import Flask
 from flask import render_template
 
-import gpio_buttons
+import gpio_wrapper
 
 
 def create_server(drinks_config):
@@ -40,9 +40,15 @@ def create_server(drinks_config):
 
         with drink_lock:
             drink = next(d for d in drinks_config if d['id'] == drink_id)
+
+            # TODO: pour in parallel
+            timed_pour(pin, time)
+
             print('Making %s for %d seconds...' %
                     (drink['name'], drink['duration']))
+
             time.sleep(drink['duration'])
+
             return ('', 200)
 
     return server
@@ -51,19 +57,29 @@ def create_server(drinks_config):
 if __name__ == "__main__":
     with open(os.path.abspath('config/pumps.json')) as f:
         pumps_config = json.load(f)
+    ingredients_available = set(p['value'] for p in pumps_config)
     with open(os.path.abspath('config/drinks.json')) as f:
         drinks_config = json.load(f)
         for drink in drinks_config:
-            drink['duration'] = max(drink['ingredients'].values())
-            drink['ingredients'] = (
-                    'Contains ' + ', '.join(drink['ingredients'].keys()))
-            drink['id'] = drink['name'].lower().replace(' ', '_')
+            ingredients_needed = set(drink['ingredients'].keys())
+            missing_ingredients = ingredients_needed - set(ingredients_available)
+            if missing_ingredients:
+                print('Not loading "%s", missing %s' % (
+                    drink['name'], ','.join(missing_ingredients)))
+            else:
+                print('Loading "%s" config...' % drink['name'])
+                drink['duration'] = max(drink['ingredients'].values())
+                drink['ingredients'] = (
+                        'Contains ' + ', '.join(drink['ingredients'].keys()))
+                drink['id'] = drink['name'].lower().replace(' ', '_')
+
+    # TODO: add a sampling mode
 
     # register drink making interrupts
     try:
         time.sleep(1)
         with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:
-            gpio_buttons.register_handlers(device)
+            gpio_wrapper.register_handlers(device)
             create_server(drinks_config).run(debug=True)
     finally:
-        gpio_buttons.cleanup_handlers()
+        gpio_wrapper.cleanup_handlers()

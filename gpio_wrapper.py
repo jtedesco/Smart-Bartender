@@ -16,6 +16,12 @@ else:
     import fake_gpio as GPIO
 
 
+def timed_pour(pin, seconds):
+    GPIO.output(pin, GPIO.LOW)
+    time.sleep(seconds)
+    GPIO.output(pin, GPIO.HIGH)
+
+
 def register_handlers(device):
     print('Registering GPIO handlers')
 
