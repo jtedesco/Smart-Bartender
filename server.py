@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import threading
 import time
 
@@ -16,10 +17,11 @@ from flask import render_template
 import gpio_wrapper
 
 
-def create_server(drinks_config):
+def create_server(drinks_config, sampling_mode=False):
 
     server = Flask(__name__)
     drink_lock = threading.Lock()
+    sampling_mode = sampling_mode
 
     @server.route("/")
     def index():
@@ -42,6 +44,7 @@ def create_server(drinks_config):
             drink = next(d for d in drinks_config if d['id'] == drink_id)
 
             # TODO: pour in parallel
+            # TODO respect sampling mode
             timed_pour(pin, time)
 
             print('Making %s for %d seconds...' %
@@ -55,6 +58,13 @@ def create_server(drinks_config):
 
 
 if __name__ == "__main__":
+
+    # Add a mode for small quantitty drink tasting
+    sampling_mode = False
+    if any('sampl' in a for a in sys.argv):
+        sampling_mode = True
+        print('Running server in sampling mode, all drinks will be made at 1/4 size.')
+
     with open(os.path.abspath('config/pumps.json')) as f:
         pumps_config = json.load(f)
     ingredients_available = set(p['value'] for p in pumps_config)
@@ -68,18 +78,18 @@ if __name__ == "__main__":
                     drink['name'], ','.join(missing_ingredients)))
             else:
                 print('Loading "%s" config...' % drink['name'])
-                drink['duration'] = max(drink['ingredients'].values())
+                drink['duration'] = (
+                        max(drink['ingredients'].values())
+                        * (0.25 if sampling_mode else 1))
                 drink['ingredients'] = (
                         'Contains ' + ', '.join(drink['ingredients'].keys()))
                 drink['id'] = drink['name'].lower().replace(' ', '_')
-
-    # TODO: add a sampling mode
 
     # register drink making interrupts
     try:
         time.sleep(1)
         with uinput.Device((uinput.KEY_ENTER, uinput.KEY_RIGHT)) as device:
             gpio_wrapper.register_handlers(device)
-            create_server(drinks_config).run(debug=True)
+            create_server(drinks_config, sampling_mode).run(debug=True)
     finally:
         gpio_wrapper.cleanup_handlers()
