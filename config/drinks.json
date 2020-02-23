@@ -1,6 +1,5 @@
 [{
   "name": "French 75",
-  "description": "",
   "ingredients": {
     "champagne": 3,
     "gin": 1,
@@ -10,7 +9,6 @@
 },
 {
   "name": "Sazerac",
-  "description": "",
   "ingredients": {
     "absinthe": 0.25,
     "simple syrup": 0.5,
@@ -18,8 +16,7 @@
   }
 },
 {
-  "name": "Mardi Gras Cocktail",
-  "description": "",
+  "name": "Hurricane",
   "ingredients": {
     "rum": 2,
     "tropical juice": 12
@@ -27,7 +24,7 @@
 },
 {
   "name": "Champagne Cocktail",
-  "description": "",
+  "image": "french_75",
   "ingredients": {
     "champagne": 3,
     "rye whisky": 1,
@@ -37,7 +34,6 @@
 },
 {
   "name": "Whisky Sour",
-  "description": "",
   "ingredients": {
     "rye whisky": 2,
     "lemon juice": 0.75,
@@ -46,7 +42,7 @@
 },
 {
   "name": "Rye Old Fashioned",
-  "description": "",
+  "image": "old_fashioned",
   "ingredients": {
     "rye whisky": 2,
     "simple syrup": 0.5
@@ -54,7 +50,7 @@
 },
 {
   "name": "Rum Old Fashioned",
-  "description": "",
+  "image": "old_fashioned",
   "ingredients": {
     "rum": 2,
     "simple syrup": 0.5
@@ -62,9 +58,9 @@
 },
 {
   "name": "Tropical Mimosa",
-  "description": "",
+  "image": "mimosa",
   "ingredients": {
     "champagne": 4,
     "tropical juice": 4
   }
-} ]
+}]

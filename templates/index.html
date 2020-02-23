@@ -34,7 +34,7 @@
             data-drink-delay={{ drink.duration }}></li>
           <img class="d-block w-100"
                 data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text={{ drink.name }}"
-                src="/static/images/{{ drink.id }}.jpg"
+                src="/static/images/{{ drink.image if drink.image else drink.id }}.jpg"
                 data-holder-rendered="true">
           <div class="carousel-caption">
             <h1>{{ drink.name }}</h1>
