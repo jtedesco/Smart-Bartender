@@ -38,7 +38,7 @@ let keyHandlerFunction = function(e) {
         let fractionDone = elapsedMs / drinkDelayMs;
         $('.progress-bar').width(Math.round(fractionDone * 100) + '%');
       }
-    }, 50);
+    }, 150);
 
     // Finished making drink callback
     let doneFunction = function() {
