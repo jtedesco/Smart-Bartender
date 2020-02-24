@@ -37,8 +37,8 @@
                 src="/static/images/{{ drink.image if drink.image else drink.id }}.jpg"
                 data-holder-rendered="true">
           <div class="carousel-caption">
-            <h1>{{ drink.name }}</h1>
-            <p>{{ drink.ingredients_list }}</p>
+            <h1 class="mr-2 ml-2">{{ drink.name }}</h1>
+            <p class="mr-2 ml-2">{{ drink.ingredients_list }}</p>
           </div>
         </div>
         {% endfor %}
