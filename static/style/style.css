@@ -1,6 +1,6 @@
 /* Vertically center carousel captions */
 .carousel-caption {
-  top: 50%;
+  top: 45%;
   transform: translateY(-50%);
   bottom: initial;
   border-radius: 1rem!important;
