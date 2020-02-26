@@ -1,47 +1,47 @@
 [{
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 1",
 	"pin": 17, 
 	"value": "gin"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 2",
 	"pin": 27, 
 	"value": "lemon juice"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 3",
 	"pin": 22, 
 	"value": "champagne"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 4",
 	"pin": 23, 
 	"value": "simple syrup"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 5",
 	"pin": 24, 
 	"value": "absinthe"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 6",
 	"pin": 25, 
 	"value": "rye whisky"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 7",
 	"pin": 12, 
 	"value": "rum"
 },
 {
-	"flowrate": 1,
+	"flowrate": 20,
 	"name": "Pump 8",
 	"pin": 16, 
 	"value": "tropical juice"
