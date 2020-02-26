@@ -96,7 +96,8 @@ if __name__ == "__main__":
                 print('Loading "%s" config...' % drink['name'])
                 drink['duration'] = (
                         max(drink['ingredients'].values())
-                        * (0.25 if sampling_mode else 1))
+                        * (0.25 if sampling_mode else 1)
+                        * max([p['flowrate'] for p in pumps_config]))
                 drink['ingredients_list'] = (
                         'Contains ' + ', '.join(drink['ingredients'].keys()))
                 drink['id'] = drink['name'].lower().replace(' ', '_')
