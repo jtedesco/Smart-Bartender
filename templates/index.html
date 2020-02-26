@@ -39,6 +39,7 @@
           <div class="carousel-caption">
             <h1 class="mr-2 ml-2">{{ drink.name }}</h1>
             <p class="mr-2 ml-2">{{ drink.ingredients_list }}</p>
+            <span class="d-none garnish">{{ drink.garnish }}</span>
           </div>
         </div>
         {% endfor %}
@@ -69,7 +70,16 @@
         </div>
       </div>
     </div>
-      
+    
+    <!-- reminder for any garnishes -->
+    <div class="modal garnish-reminder">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <h3 class="modal-body"></h3>
+        </div>
+      </div>
+    </div>
+     
     <!-- bootstrap boilerplate -->
     <script src="/static/scripts/jquery-3.4.1.min.js"></script>
     <script src="/static/scripts/bootstrap.min.js"></script>

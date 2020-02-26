@@ -13,7 +13,8 @@
     "absinthe": 0.25,
     "simple syrup": 0.5,
     "rye whisky": 1.5
-  }
+  },
+  "garnish": "Add three drops of Peychaud's bitters and a drop of lemon oil. Enjoy!"
 },
 {
   "name": "Hurricane",
@@ -30,7 +31,8 @@
     "rye whisky": 1,
     "simple syrup": 0.5,
     "lemon juice": 0.5
-  }
+  },
+  "garnish": "Add a dash of Angostura bitters and enjoy!"
 },
 {
   "name": "Whisky Sour",
@@ -46,7 +48,8 @@
   "ingredients": {
     "rye whisky": 2,
     "simple syrup": 0.5
-  }
+  },
+  "garnish": "Don't forget to add Angostura and orange bitters. Enjoy!"
 },
 {
   "name": "Rum Old Fashioned",
@@ -54,7 +57,8 @@
   "ingredients": {
     "rum": 2,
     "simple syrup": 0.5
-  }
+  },
+  "garnish": "Don't forget to add Angostura and orange bitters. Enjoy!"
 },
 {
   "name": "Tropical Mimosa",
