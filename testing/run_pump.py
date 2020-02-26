@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 import RPi.GPIO as GPIO
 
 GPIO.setwarnings(False)
@@ -20,10 +21,12 @@ print('Running %s, flowrate %.2f, pin %d, with %s' % (
 
 pin = config['pin']
 try:
+    begin = time.time()
     GPIO.output(pin, GPIO.LOW)
     while True:
         pass
 except:
-    pass
+    end = time.time()
+    print('Ran for %.2f seconds' % (end - begin))
 finally:
     GPIO.output(pin, GPIO.HIGH)
