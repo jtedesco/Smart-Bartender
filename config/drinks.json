@@ -35,14 +35,6 @@
   "garnish": "Add a dash of Angostura bitters and enjoy!"
 },
 {
-  "name": "Whisky Sour",
-  "ingredients": {
-    "rye whisky": 2,
-    "lemon juice": 0.75,
-    "simple syrup": 0.75
-  }
-},
-{
   "name": "Rye Old Fashioned",
   "image": "old_fashioned",
   "ingredients": {
