@@ -3,12 +3,8 @@
   top: 45%;
   transform: translateY(-50%);
   bottom: initial;
-  border-radius: 1rem!important;
-  background-color: #666666;
-  border: 2px solid white;
-  box-shadow: 3px #000000;
-  opacity: 0.9;
 }
+
 .carousel-item {
   transform-style: preserve-3d;
 }
@@ -21,6 +17,15 @@
 
 .progress-popup {
   height: 30px;
+}
+
+.translucent-popup {
+  color: white;
+  border-radius: 1rem!important;
+  background-color: #666666;
+  border: 2px solid white;
+  box-shadow: 3px #000000;
+  opacity: 0.9;
 }
 
 /* Prevent body overflow (e.g. in kiosk mode) */
