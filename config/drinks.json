@@ -1,7 +1,7 @@
 [{
   "name": "French 75",
   "ingredients": {
-    "champagne": 5,
+    "champagne": 4,
     "gin": 1,
     "simple syrup": 0.5,
     "lemon juice": 0.5
@@ -27,7 +27,7 @@
   "name": "Champagne Cocktail",
   "image": "french_75",
   "ingredients": {
-    "champagne": 5,
+    "champagne": 4,
     "rye whisky": 1,
     "simple syrup": 0.5,
     "lemon juice": 0.5
