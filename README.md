@@ -1,74 +1,63 @@
-# Modified Version 
+# Smart Bartender
 
-Since i have Buttons with a Red LED i did a StandBy light that is Red...
-https://imgur.com/a/V2bNtEk
+Raspberry Pi-based smart bartender using a simple Python server & HDMI display. This project was forked from a HackerShack project but rewritten from the ground up. This version uses peristaltic pumps controlled by a Raspberry Pi, two Gpio buttons for controls, and a small HDMI display pointed to a local Python server that dispenses drinks.
 
-- changed the Font and made it bigger
+## Configuration Files
 
-- set a Default StandBy Light to Red
+JSON configs are used for both the pump attributes (e.g. ingredient names, flow rates) and the drinks themselves. On startup, the server filters the drink list to only include drinks with all ingredients available in the pump configs.
 
-- Changed some Pins
+### pumps.json
 
-- added the Drinklist by Danzibob
-
-- Fixed ProgressBar (Yogesh)
-
-- FlowRate can be set for each pump
-
-------------------------------------------------------------------------------------
-# Smart Bartender with Adafruit SSD1306
-Make sure the following are installed:
-* Python 2.7 (should already be installed on most Raspberry Pi)
-* [pip](https://www.raspberrypi.org/documentation/linux/software/python.md)
-
-### Enable SPI
-You'll need to enable SPI for the OLED screen to work properly. Typing the following command in the terminal will bring you to a configuration menu.
+The pump configuration persists information about pumps and the liquids that they are assigned to. An pump entry looks like this:
 
 ```
-raspi-config 
+"pump_1": {
+    "flowrate": 20,
+		"name": "Pump 1",
+		"pin": 17, 
+		"value": "gin"
+	}
 ```
 
-Then navigate to `Interfacing Options` and select `SPI`. Make sure it's turned on and reboot.
+Flowrate indicates the time (in seconds) that it takes for this pump to pull 1oz of liquid through the tube. This can be adjusted to adjust pump timings for faster or slower pumps (or for adjustments like pumps with carbonated ingredients, which may pull less liquid volume per second than non-carbonated liquids).
 
-See this [article](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/) for more help if you need it.
+Each pump key needs to be unique. It is comprised of `name`, `pin`, and `value`. `name` is the display name shown to the user on the pump configuration menu, `pin` is the GPIO pin attached to the relay for that particular pump, and `value` is the current selected drink. `value` doesn't need to be set initially, but it will be changed once you select an option from the configuration menu.
 
-### I2C
-Make sure i2c is also configured properly. Type
+### drinks.json
 
-```
-sudo vim /etc/modules
-```
+The drinks configuration maps pump `value` entries to `ingredients` to configure the time required per pump. All ingredient values are in units of ounces and will be scaled using the flowrate pump config to determine the specific timing.
 
-in the terminal
-
-press `i`, then make sure to paste the following two lines in the file:
+The `name` will both be the name displayed, and unless `image` is provided, the background image for the menu item on the server. `garnish` displays an optional message for a few seconds after the drink is completed.
 
 ```
-i2c-bcm2708
-i2c-dev
+{
+  "name": "Sazerac",
+  "ingredients": {
+    "absinthe": 0.25,
+    "simple syrup": 0.5,
+    "rye whisky": 1.5
+  },
+  "garnish": "Add three drops of Peychaud's bitters and lemon peel"
+}
 ```
 
-press `esc` then `ZZ` to save and exit.
+## Running Outside RaspberryPI
 
-## OLED Setup
+The Python server uses a set of stub libraries for gpio and automatically switches to these libraries instead of the real gprio libraries when running off of a Raspberry PI. This allows development of the drink server on devices other than the Raspberry Pi.
 
-You need to install the Adafruit Python SSD1306 library with
+## Testing Utilities
 
-```
-sudo python -m pip install --upgrade pip setuptools wheel
-sudo pip install Adafruit-SSD1306
-```
+The `testing` directory contains several utilities for testing components of the Raspberry Pi:
 
-Or alternatively:
+1. `calibrate_pumps.py`: Runs a given pump for a fixed time. Useful for determining the flowrate of individual pumps to pour one ounce of liquid.
 
-```
-sudo python -m pip install --upgrade pip setuptools wheel
-git clone https://github.com/adafruit/Adafruit_Python_SSD1306.git
-cd Adafruit_Python_SSD1306
-sudo python setup.py install
-```
+1. `run_all_pumps.py`: Runs all pumps at once. Useful for rinsing or washing the pump tubes
 
-There is also a [guide](https://learn.adafruit.com/ssd1306-oled-displays-with-raspberry-pi-and-beaglebone-black/usage) on the Adafruit website if you get stuck.
+1. `run_pump.py`: Runs a single pump until the script is quit
+
+1. `test_buttons.py`: Attaches a listener to print debug when gpio buttons are pressed
+
+1. `test_pumps.py`: Tests both the pump wiring and total amperage draw by individually starting each pump, then starting them all at once in sequence.
 
 ## Running the Code
 
@@ -87,57 +76,15 @@ sudo pip install -r requirements.txt
 You can start the bartender by running
 
 ```
-sudo python bartender.py
+sudo python server.py
 ```
 
-### How it Works
-There are two files that support the bartender.py file:
+### Autostart.sh
 
-#### drinks.py
-Holds all of the possible drink options. Drinks are filtered by the values in the pump configuration. If you want to add more drinks, add more entries to `drinks_list`. If you want to add more pump beverage options, add more entries to the `drink_options`.
+The commands described below are consolidated into `autostart.sh`. Adding this shell script to auto-run should be sufficient to accomplish both steps below.
 
-`drinks_list` entries have the following format:
+### Running the Server at Startup
 
-```
-{
-		"name": "Gin & Tonic",
-		"ingredients": {
-			"gin": 50,
-			"tonic": 150
-		}
-	}
-```
-
-`name` specifies a name that will be displayed on the OLED menu. This name doesn't have to be unique, but it will help the user identify which drink has been selected. `ingredients` contains a map of beverage options that are available in `drink_options`. Each key represents a possible drink option. The value is the amount of liquid in mL. *Note: you might need a higher value for carbonated beverages since some of the CO2 might come out of solution while pumping the liquid.*
-
-`drink_options` entries have the following format:
-
-```
-{"name": "Gin", "value": "gin"}
-```
-
-The name will be displayed on the pump configuration menu and the value will be assigned to the pump. The pump values will filter out drinks that the user can't make with the current pump configuration. 
-
-### pump_config.json
-The pump configuration persists information about pumps and the liquids that they are assigned to. An pump entry looks like this:
-
-```
-"pump_1": {
-		"name": "Pump 1",
-		"pin": 17, 
-		"value": "gin"
-	}
-```
-
-Each pump key needs to be unique. It is comprised of `name`, `pin`, and `value`. `name` is the display name shown to the user on the pump configuration menu, `pin` is the GPIO pin attached to the relay for that particular pump, and `value` is the current selected drink. `value` doesn't need to be set initially, but it will be changed once you select an option from the configuration menu.
-
-Our bartender only has 6 pumps, but you could easily use more by adding more pump config entries.
-
-### A Note on Cleaning
-After you use the bartender, you'll want to flush out the pump tubes in order to avoid bacteria growth. There is an easy way to do this in the configuration menu. Hook all the tubes up to a water source, then navigate to `configure`->`clean` and press the select button. All pumps will turn on to flush the existing liquid from the tubes. I take the tubes out of the water source halfway through to remove all liquid from the pumps. *Note: make sure you have a glass under the funnel to catch the flushed out liquid.*
-
-
-### Running at Startup
 You can configure the bartender to run at startup by starting the program from the `rc.local` file. First, make sure to get the path to the repository directory by running
 
 ```
@@ -156,9 +103,19 @@ to open the rc.local file. Next, press `i` to edit. Before the last line, add th
 
 ```
 cd your/pwd/path/here
-sudo python bartender.py &
+sudo python server.py &
 ```
 
-`your/pwd/path/here` should be replaced with the path you copied above. `sudo python bartender.py &` starts the bartender program in the background. Finally, press `esc` then `ZZ` to save and exit. 
+`your/pwd/path/here` should be replaced with the path you copied above. `sudo python server.py &` starts the bartender program in the background. Finally, press `esc` then `ZZ` to save and exit. 
 
 If that doesn't work, you can consult this [guide](https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/) for more options.
+
+### Running the Browser at Startup
+
+Once the server launches at startup, you can show the server's landing page automatically at startup by adding the following command to auto-run after the server launches (with some delay):
+
+```
+sleep 5 && chromium-browser --kiosk --disable-session-crashed-bubble http://localhost:5000  && unclutter -idle 0.1 -root &
+```
+
+This command launches Chromium full-screen and hides the cursor.
