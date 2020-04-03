@@ -45,4 +45,16 @@
 	"name": "Pump 8",
 	"pin": 16, 
 	"value": "tropical juice"
+},
+{
+	"flowrate": 20,
+	"name": "Pump 9",
+	"pin": 14, 
+	"value": "champagne"
+},
+{
+	"flowrate": 20,
+	"name": "Pump 10",
+	"pin": 15, 
+	"value": "tropical juice"
 }]
