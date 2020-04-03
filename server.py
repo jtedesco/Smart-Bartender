@@ -1,3 +1,4 @@
+import collections
 import gpio_wrapper
 import json
 import os
@@ -28,7 +29,9 @@ def create_server(drinks_config, pumps_config, sampling_mode=False):
     server = Flask(__name__)
     drink_lock = threading.Lock()
     sampling_mode = sampling_mode
-    pumps_by_ingredient = {p['value']: (p['pin'], p['flowrate']) for p in pumps_config}
+    pumps_by_ingredient = collections.defaultdict(list)
+    for p in pumps_config:
+        pumps_by_ingredient[p['value']].append((p['pin'], p['flowrate']))
 
     @server.route("/")
     def index():
@@ -50,16 +53,20 @@ def create_server(drinks_config, pumps_config, sampling_mode=False):
         with drink_lock:
             drink = next(d for d in drinks_config if d['id'] == drink_id)
 
-            print('Making %s for %d seconds...' %
-                    (drink['name'], drink['duration']))
 
             threads = []
-            for ingredient, duration in drink['ingredients'].items():
-                pin, flowrate = pumps_by_ingredient[ingredient]
-                duration = duration * flowrate * (0.25 if sampling_mode else 1)
-                thread = threading.Thread(target=timed_pour, args=(pin, duration))
-                thread.start()
-                threads.append(thread)
+            durations = []
+            for ingredient, ingredient_duration in drink['ingredients'].items():
+                available_pumps = pumps_by_ingredient[ingredient]
+                per_pump_duration = ingredient_duration / float(len(available_pumps))
+                for pin, flowrate in available_pumps:
+                    duration = (per_pump_duration * flowrate * (0.25 if sampling_mode else 1))
+                    durations.append(duration)
+                    print("Pin %d (%s) for %.2f seconds" % (pin, ingredient, duration))
+                    thread = threading.Thread(target=timed_pour, args=(pin, duration))
+                    thread.start()
+                    threads.append(thread)
+            print('Making %s for %d seconds...' % (drink['name'], max(durations)))
             for thread in threads:
                 thread.join()
 
