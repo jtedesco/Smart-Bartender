@@ -24,14 +24,24 @@ def timed_pour(pin, seconds):
     GPIO.output(pin, GPIO.HIGH)
 
 
+def calculate_pump_timings(drink_config, pumps_config, sampling_mode):
+    pump_timings = {}
+    pumps_by_ingredient = collections.defaultdict(list)
+    for p in pumps_config:
+        pumps_by_ingredient[p['value']].append((p['pin'], p['flowrate']))
+    for ingredient, ingredient_volume in drink_config['ingredients'].items():
+        available_pumps = pumps_by_ingredient[ingredient]
+        per_pump_volume = ingredient_volume / float(len(available_pumps))
+        for pin, flowrate in available_pumps:
+            pump_timings[pin] = per_pump_volume * flowrate * (0.25 if sampling_mode else 1)
+    return pump_timings
+
+
 def create_server(drinks_config, pumps_config, sampling_mode=False):
 
     server = Flask(__name__)
     drink_lock = threading.Lock()
     sampling_mode = sampling_mode
-    pumps_by_ingredient = collections.defaultdict(list)
-    for p in pumps_config:
-        pumps_by_ingredient[p['value']].append((p['pin'], p['flowrate']))
 
     @server.route("/")
     def index():
@@ -52,21 +62,13 @@ def create_server(drinks_config, pumps_config, sampling_mode=False):
 
         with drink_lock:
             drink = next(d for d in drinks_config if d['id'] == drink_id)
-
-
             threads = []
-            durations = []
-            for ingredient, ingredient_duration in drink['ingredients'].items():
-                available_pumps = pumps_by_ingredient[ingredient]
-                per_pump_duration = ingredient_duration / float(len(available_pumps))
-                for pin, flowrate in available_pumps:
-                    duration = (per_pump_duration * flowrate * (0.25 if sampling_mode else 1))
-                    durations.append(duration)
-                    print("Pin %d (%s) for %.2f seconds" % (pin, ingredient, duration))
-                    thread = threading.Thread(target=timed_pour, args=(pin, duration))
-                    thread.start()
-                    threads.append(thread)
-            print('Making %s for %d seconds...' % (drink['name'], max(durations)))
+            pump_timings = calculate_pump_timings(drink, pumps_config, sampling_mode)
+            for pin, duration in pump_timings.items():
+                thread = threading.Thread(target=timed_pour, args=(pin, duration))
+                thread.start()
+                threads.append(thread)
+            print('Making %s for %d seconds...' % (drink['name'], max(pump_timings.values())))
             for thread in threads:
                 thread.join()
 
@@ -92,23 +94,24 @@ if __name__ == "__main__":
     ingredients_available = set(p['value'] for p in pumps_config)
     with open(os.path.abspath('config/drinks.json')) as f:
         drinks_config = json.load(f)
-        updated_drinks = []
-        for drink in drinks_config:
-            ingredients_needed = set(drink['ingredients'].keys())
-            missing_ingredients = ingredients_needed - set(ingredients_available)
-            if missing_ingredients:
-                print('Not loading "%s", missing %s' % (
-                    drink['name'], ','.join(missing_ingredients)))
-            else:
-                print('Loading "%s" config...' % drink['name'])
-                drink['duration'] = (
-                        max(drink['ingredients'].values())
-                        * (0.25 if sampling_mode else 1)
-                        * max([p['flowrate'] for p in pumps_config]))
-                drink['ingredients_list'] = (
-                        'Contains ' + ', '.join(drink['ingredients'].keys()))
-                drink['id'] = drink['name'].lower().replace(' ', '_')
-                updated_drinks.append(drink)
+
+    # Update drinks metadata
+    updated_drinks = []
+    for drink in drinks_config:
+        ingredients_needed = set(drink['ingredients'].keys())
+        missing_ingredients = ingredients_needed - set(ingredients_available)
+        if missing_ingredients:
+            print('Not loading "%s", missing %s' % (
+                drink['name'], ','.join(missing_ingredients)))
+        else:
+            print('Loading "%s" config...' % drink['name'])
+            pump_timings = calculate_pump_timings(drink, pumps_config, sampling_mode)
+            drink['duration'] = max(pump_timings.values())
+            drink['ingredients_list'] = (
+                    'Contains ' + ', '.join(drink['ingredients'].keys()))
+            drink['id'] = drink['name'].lower().replace(' ', '_')
+            updated_drinks.append(drink)
+            print('%s: %d seconds' % (drink['name'], drink['duration']))
 
     # Register gpio / keyboard mapping
     try:
